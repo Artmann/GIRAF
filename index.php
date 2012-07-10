@@ -1,11 +1,8 @@
 <?php
-    
-    require_once 'library/model.php';
-    require_once 'library/controller.php';
-    require_once 'db/db.config.php';
+    require_once 'config.php';
     require_once 'db/db.php';
-    require_once 'lib/controller.php';
-    require_once 'lib/model.php';
+    require_once 'library/Model.php';
+    require_once 'library/Controller.php';
     require_once 'inc/LoadFolder.php';
     
     /**

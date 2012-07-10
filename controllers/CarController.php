@@ -1,10 +1,13 @@
 <?php
 
-class CarController 
+class CarController extends Controller
 {
     public function getYear()
     {
          $car = new CarModel();
-         return $car->getYear();
+         
+         $data = array("year" => $car->getYear());
+         
+         return $this->createResponse($data);
     }
 }
