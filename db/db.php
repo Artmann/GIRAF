@@ -10,7 +10,8 @@ class Database
         
         $connection = new PDO("mysql:host=".$dbconf['host']."dbname=".$dbconf['database'], $dbconf['username'], $dbconf['password']);
             
-        $res = $connection->query($sql); 
+        $res = $connection->prepare($sql);
+        $res->execute($data);
         
         if(!$res)
             throw  new Exception($connection->errorInfo());
