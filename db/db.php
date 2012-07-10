@@ -8,7 +8,7 @@ class Database
         
         $dbconf = $databases[$database];
         
-        $connection = new PDO("mysql:host=".$dbconf['host']."dbname=".$dbconf['database'], $dbconf['username'], $dbconf['password']);
+        $connection = new PDO("mysql:host=".$dbconf['host'].";dbname=".$dbconf['database'], $dbconf['username'], $dbconf['password']);
             
         $res = $connection->prepare($sql);
         $res->execute($data);

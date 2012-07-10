@@ -2,11 +2,12 @@
 
 class CarController extends Controller
 {
-    public function getYear()
+    public function details($data)
     {
-         $car = new CarModel();
+        var_dump($data);
+         $car = new CarModel($data["id"]);
          
-         $data = array("year" => $car->getYear());
+         $data = array("car" => $car);
          
          return $this->createResponse($data);
     }

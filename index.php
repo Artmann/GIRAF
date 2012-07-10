@@ -19,10 +19,7 @@
         foreach ($controllers as $c)
             require_once $c["file"];
     
-    $data = $_GET;
-    if(isset($_POST))
-        $data = $_POST;
-    
+   
     $controller = "index";
     $action = "index";
     
@@ -46,8 +43,10 @@
         
         if($cont != "")
         {
+            
             $myController = new $cont();
-            echo $myController->$action($data);
+           
+            echo $myController->$action($_GET);
         }
         else
         {

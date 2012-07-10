@@ -2,9 +2,20 @@
 
 class CarModel
 {
-    public function getYear()
+    public $id;
+    public $brand;
+    public $model;
+    public $year;
+    
+    public function __construct($id) 
     {
-        return 1992;
+        $res = Database::Query("SELECT * FROM car WHERE id=:id", array("id" => $id), "localhost");
+        $row = $res->fetch(PDO::FETCH_ASSOC);
+        
+        $this->id = $id;
+        $this->brand = $row["brand"];
+        $this->model = $row["model"];
+        $this->year = $row["year"];
     }
     
 }
