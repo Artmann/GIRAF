@@ -7,8 +7,10 @@ class Model
     public $table_name;
     private $data;
     
-    public function __construct($data) 
+    public function __construct($data, $database, $table_name) 
     {
+        $this->database = $database;
+        $this->table_name = $table_name;
         $this->data = $data;
     }
     
@@ -27,15 +29,22 @@ class Model
                 $data[$key] = $value;
         }
         
-        $model = new Model($data);
+        $model = new Model($data, $database, $table_name);
         $model->id = $id;
-        $model->database = $database;
-        $model->table_name = $database;
         return $model;
     }
     
     public function Insert()
     {
+        if(sizeof($this->data) < 1)
+            throw new Exception("No data to insert.");
+        
+        $keys = array_keys($this->data);
+        $pdokeys = ":".implode(",:", $keys);
+        $sql = "INSERT INTO ".$this->table_name."(".  implode(", ", $keys).") VALUES($pdokeys)";
+        $data = array_combine(explode(',',$pdokeys), array_values($this->data));
+        print_r($data);
+        Database::Query($sql, $data, $this->database);
         
     }
     
