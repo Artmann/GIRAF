@@ -3,18 +3,19 @@
 class Model
 {
     public $id;
+    public $database;
     public $table_name;
+    private $data;
     
     public function __construct($data) 
     {
-        foreach($data as $key => $value)
-            $this->$key = $value;
+        $this->data = $data;
     }
     
     public static function Load($id, $database, $table_name)
     {
         $sql = "SELECT * FROM :table WHERE id=:id";
-        $data = array(":id" => (int)$id, ":table" => table_name);
+        $data = array(":id" => (int)$id, ":table" => $table_name);
         
         $res = Database::Query($sql, $data, $database);
         
@@ -26,10 +27,14 @@ class Model
                 $data[$key] = $value;
         }
         
-        return new Model($data);
+        $model = new Model($data);
+        $model->id = $id;
+        $model->database = $database;
+        $model->table_name = $database;
+        return $model;
     }
     
-    public static function Create($data)
+    public function Insert()
     {
         
     }
@@ -42,6 +47,15 @@ class Model
     public function Delete()
     {
         
+    }
+    
+    public function __get($key)
+    {
+        return isset($this->holder[$key]) ? $this->holder[$key] : false;
+    }
+    public function __set($key, $value)
+    {
+        $this->holder[$key] = $value;
     }
     
 }
