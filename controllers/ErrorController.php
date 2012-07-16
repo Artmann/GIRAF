@@ -2,7 +2,7 @@
 
 class ErrorController extends Controller
 {
-    public static function Handle($errormsg)
+    public function Handle($errormsg)
     {
         return $this->createResponse(array("Error" => $errormsg));
     }

@@ -55,7 +55,8 @@
     }
     catch(Exception $e)
     {
-        echo ErrorController::Handle($e->getMessage());
+        $Error = new ErrorController();
+        echo $Error->Handle($e->getMessage());
     }
 
     
