@@ -3,33 +3,31 @@
 class Model
 {
     public $id;
-    public $database;
-    public $table_name;
+    public static $database;
+    public static $table_name;
     private $data;
     
-    public function __construct($data, $database, $table_name) 
+    public function __construct($data) 
     {
-        $this->database = $database;
-        $this->table_name = $table_name;
         $this->data = $data;
     }
     
-    public static function Load($id, $database, $table_name)
+    public static function Load($id)
     {
-        $sql = "SELECT * FROM :table WHERE id=:id";
-        $data = array(":id" => (int)$id, ":table" => $table_name);
+        $sql = "SELECT * FROM ".static::$table_name." WHERE id=:id";
+        $data = array(":id" => (int)$id);
         
-        $res = Database::Query($sql, $data, $database);
+        $res = Database::Query($sql, $data, static::$database);
         
         $data = array();
+        $rows = $res->fetchAll(PDO::FETCH_ASSOC);
         
-        while ($row = $res->fetch(PDO::FETCH_ASSOC))
-        {
+        foreach($rows as $row)
             foreach($row as $key => $value)
-                $data[$key] = $value;
-        }
+             $data[$key] = $value;
         
-        $model = new Model($data, $database, $table_name);
+        $class = get_called_class();
+        $model = new $class($data);
         $model->id = $id;
         return $model;
     }
@@ -41,15 +39,26 @@ class Model
         
         $keys = array_keys($this->data);
         $pdokeys = ":".implode(",:", $keys);
-        $sql = "INSERT INTO ".$this->table_name."(".  implode(", ", $keys).") VALUES($pdokeys)";
+        $sql = "INSERT INTO ".  static::$table_name."(".  implode(", ", $keys).") VALUES($pdokeys)";
         $data = array_combine(explode(',',$pdokeys), array_values($this->data));
         print_r($data);
-        Database::Query($sql, $data, $this->database);
+        Database::Query($sql, $data, static::$database);
         
     }
     
     public function Update()
     {
+        $pairs = array();
+        $binds = array();
+        
+        foreach ($this->data as $key => $value)
+        {
+            $pairs[] = "$key=:$key";
+            $binds[":$key"] = $value;
+        }
+        
+        $sql = "UPDATE ".static::$table_name." SET ".implode(",", $pairs)." WHERE id=".$this->id;
+        Database::Query($sql, $binds,  static::$database);
         
     }
     
@@ -58,13 +67,21 @@ class Model
         
     }
     
-    public function __get($key)
+    public function data()
     {
-        return isset($this->holder[$key]) ? $this->holder[$key] : false;
+        return $this->data;
     }
-    public function __set($key, $value)
+    
+    public function Get($key)
     {
-        $this->holder[$key] = $value;
+        if(!isset($this->data[$key]))
+            throw new Exception("Could not find property $key in ".  get_class($this));
+        
+        return $this->data[$key];
+    }
+    public function Set($key, $value)
+    {
+        $this->data[$key] = $value;
     }
     
 }
