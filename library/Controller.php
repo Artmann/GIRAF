@@ -2,6 +2,11 @@
 
 class Controller
 {
+    public function index($data)
+    {
+    	createResponse($data);
+    }
+
     public function createResponse($data)
     {
         switch(Config::get("responseType"))
