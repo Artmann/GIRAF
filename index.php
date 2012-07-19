@@ -27,7 +27,10 @@
         $controller = strtolower($_GET["controller"]);
     if(isset($_GET["action"]))
         $action = strtolower($_GET["action"]);
-    
+
+    if($action == "createresponse")
+	$action = "index";
+
     //print_r($controllers);
     
     try
