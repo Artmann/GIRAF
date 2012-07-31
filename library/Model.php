@@ -32,6 +32,22 @@ class Model
         return $model;
     }
     
+    public static function LoadAll()
+    {
+        $models = array();
+
+        $res = Database::Query("SELECT id FROM ".static::$table_name."", array(), static::$database);
+        $rows = $res->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach($rows as $row)
+        {
+                $models[] = static::Load($row["id"]);
+
+        }
+
+        return $models;
+    }
+    
     public function Insert()
     {
         if(sizeof($this->data) < 1)
