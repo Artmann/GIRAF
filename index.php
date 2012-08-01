@@ -3,6 +3,9 @@
     require_once 'db/db.php';
     require_once 'library/Model.php';
     require_once 'library/Controller.php';
+    require_once 'APIAccess/APIAccount.php';
+    require_once 'APIAccess/APIKey.php';
+    require_once 'APIAccess/APIAccess.php';
     require_once 'inc/LoadFolder.php';
     
     /**
@@ -22,16 +25,25 @@
    
     $controller = "index";
     $action = "index";
+    $apikey = "";
     
     if(isset($_GET["controller"]))
         $controller = strtolower($_GET["controller"]);
     if(isset($_GET["action"]))
         $action = strtolower($_GET["action"]);
-
+    if(isset($_GET["apikey"]))
+        $apikey = $apikey; 
+        
     if($action == "createresponse")
 	$action = "index";
 
-    //print_r($controllers);
+    $APIAccess = APIAccess::GetAPIAccess($controller, $action);
+    
+    if(sizeof($APIAccess) > 0)
+    {
+        if(!in_array(APIKey::GetGroup($apikey), $APIAccess))
+               die("Invalid API-Key");
+    } 
     
     try
     {

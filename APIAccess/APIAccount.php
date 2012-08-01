@@ -49,7 +49,7 @@ class APIAccount
 	}
 
 
-	public static function load($id)
+	public static function Load($id)
 	{
 	}
 }

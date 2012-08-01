@@ -14,12 +14,17 @@ class APIKey
 		$this->key = $key;
 	}
 	
-	public static function create($name, $key)
+	public static function Create($name, $key)
 	{
 		//Insert into Database
 	}
 	
-	public static function load($id)
+	public static function Load($id)
 	{
 	}
+        
+        public static function GetGroup($key)
+        {
+            
+        }
 }
