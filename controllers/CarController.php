@@ -13,8 +13,7 @@ class CarController extends Controller
     public function test($data)
     {
         $car = CarModel::Load(5);
-        $car->model = "foobar";
-        $car->Update();
+        $car->Delete();
         
         
         

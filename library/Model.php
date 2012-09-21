@@ -86,7 +86,13 @@ class Model
     
     public function Delete()
     {
+        $data = array(":id" => (int) $this->id);
+        $sql = "DELETE FROM ".static::$table_name." WHERE id = :id";
         
+        $res = Database::Query($sql, $data, static::$database);
+        
+        if(!$res)
+            throw new Exception("Could not delete record.");
     }
     
     private function getData()
