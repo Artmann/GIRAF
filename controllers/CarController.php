@@ -12,10 +12,12 @@ class CarController extends Controller
     
     public function test($data)
     {
-        $car = CarModel::Load(1);
-        $car->Set("year", 2005);
+        $car = CarModel::Load(5);
+        $car->model = "foobar";
         $car->Update();
         
-        return $this->createResponse($car->data());
+        
+        
+        return $this->createResponse($car);
     }
 }

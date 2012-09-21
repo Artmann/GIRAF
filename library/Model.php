@@ -5,11 +5,11 @@ class Model
     public $id;
     public static $database;
     public static $table_name;
-    private $data;
     
     public function __construct($data) 
     {
-        $this->data = $data;
+       foreach($data as $key => $value)
+           $this->$key = $value;
     }
     
     public static function Load($id)
@@ -19,16 +19,16 @@ class Model
         
         $res = Database::Query($sql, $data, static::$database);
         
-        $data = array();
+        $modelData = array();
         $rows = $res->fetchAll(PDO::FETCH_ASSOC);
         
         foreach($rows as $row)
             foreach($row as $key => $value)
-             $data[$key] = $value;
+             $modelData[$key] = $value;
         
         $class = get_called_class();
-        $model = new $class($data);
-        $model->id = $id;
+        $model = new $class($modelData);
+        
         return $model;
     }
     
@@ -50,14 +50,16 @@ class Model
     
     public function Insert()
     {
-        if(sizeof($this->data) < 1)
+        $data = $this->getData();
+       
+        if(sizeof($data) < 1)
             throw new Exception("No data to insert.");
         
-        $keys = array_keys($this->data);
+        $keys = array_keys($data);
         $pdokeys = ":".implode(",:", $keys);
         $sql = "INSERT INTO ".  static::$table_name."(".  implode(", ", $keys).") VALUES($pdokeys)";
-        $data = array_combine(explode(',',$pdokeys), array_values($this->data));
-        print_r($data);
+        $data = array_combine(explode(',',$pdokeys), array_values($data));
+        echo "$sql<br>";
         Database::Query($sql, $data, static::$database);
         
     }
@@ -66,8 +68,12 @@ class Model
     {
         $pairs = array();
         $binds = array();
+        $data = $this->getData();
         
-        foreach ($this->data as $key => $value)
+        if(!isset($data["id"]) or $data["id"] < 0)
+            throw new Exception("Update: Invalid id.");
+        
+        foreach ($data as $key => $value)
         {
             $pairs[] = "$key=:$key";
             $binds[":$key"] = $value;
@@ -83,21 +89,23 @@ class Model
         
     }
     
-    public function data()
+    private function getData()
     {
-        return $this->data;
+        $class = get_called_class();
+        $reflect = new ReflectionClass($class);
+        $props   = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
+        
+        $data = array();
+        
+        foreach($props as $prop)
+        {
+            $v = $prop->getName();
+            if(!$prop->isStatic() && isset($this->$v))
+                $data[$v] = $this->$v;
+        }
+        
+        return $data;
     }
     
-    public function Get($key)
-    {
-        if(!isset($this->data[$key]))
-            throw new Exception("Could not find property $key in ".  get_class($this));
-        
-        return $this->data[$key];
-    }
-    public function Set($key, $value)
-    {
-        $this->data[$key] = $value;
-    }
     
 }
